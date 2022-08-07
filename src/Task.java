@@ -3,6 +3,7 @@ public class Task {
     protected String taskName;
     protected String taskDescription;
     protected String taskStatus;
+    protected TasksStatus tasksStatus;
 
     public Task(int taskId, String taskName, String taskDescription, String taskStatus) {
         this.taskId = taskId;
@@ -39,8 +40,8 @@ public class Task {
         return taskStatus;
     }
 
-    public void setTaskStatus(String taskStatus) {
-        this.taskStatus = taskStatus;
+    public void setTaskStatus(TasksStatus tasksStatus) {
+        this.taskStatus = String.valueOf(tasksStatus);
     }
 
     @Override
