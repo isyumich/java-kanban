@@ -4,7 +4,7 @@ public class Managers<T extends TaskManager> {
         return task;
     }
 
-    public static HistoryManager getDefaultHistory(InMemoryHistoryManager inMemoryHistoryManager) {
+    public static HistoryManager<Task> getDefaultHistory(InMemoryHistoryManager<Task> inMemoryHistoryManager) {
         return inMemoryHistoryManager;
     }
 }

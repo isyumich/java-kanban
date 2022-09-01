@@ -7,7 +7,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected HashMap<Integer, Task> tasks = new HashMap<>();
     protected HashMap<Integer, Epic> epics = new HashMap<>();
     protected HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    protected InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
+    protected InMemoryHistoryManager<Task> inMemoryHistoryManager = new InMemoryHistoryManager<>();
 
 
     @Override
@@ -76,7 +76,7 @@ public class InMemoryTaskManager implements TaskManager {
         return allSubTasksInfo.toString();
     }
     @Override
-    public HistoryManager getHistory() {
+    public HistoryManager<Task> getHistory() {
         return Managers.getDefaultHistory(inMemoryHistoryManager);
     }
     @Override
@@ -95,19 +95,19 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteAllTasks () {
         for (Integer taskId : tasks.keySet()) {
-            inMemoryHistoryManager.remove(taskId);
+            inMemoryHistoryManager.removeNode(inMemoryHistoryManager.mapLastViewTasks.get(taskId));
         }
         tasks.clear();
     }
     @Override
     public void deleteOneTask (int id) {
         tasks.remove(id);
-        inMemoryHistoryManager.remove(id);
+        inMemoryHistoryManager.removeNode(inMemoryHistoryManager.mapLastViewTasks.get(id));
     }
     @Override
     public void deleteAllSubTasks () {
         for (Integer subtaskId : subtasks.keySet()) {
-            inMemoryHistoryManager.remove(subtaskId);
+            inMemoryHistoryManager.removeNode(inMemoryHistoryManager.mapLastViewTasks.get(subtaskId));
         }
         subtasks.clear();
         for (Integer integer : epics.keySet()) {
@@ -120,7 +120,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteOneSubTask (int id) {
         deleteSubtaskFromEpic(id);
         subtasks.remove(id);
-        inMemoryHistoryManager.remove(id);
+        inMemoryHistoryManager.removeNode(inMemoryHistoryManager.mapLastViewTasks.get(id));
     }
     @Override
     public void deleteSubtaskFromEpic (int id) {
@@ -134,10 +134,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteAllEpics () {
         for (Integer subtaskId : subtasks.keySet()) {
-            inMemoryHistoryManager.remove(subtaskId);
+            inMemoryHistoryManager.removeNode(inMemoryHistoryManager.mapLastViewTasks.get(subtaskId));
         }
         for (Integer epicId : epics.keySet()) {
-            inMemoryHistoryManager.remove(epicId);
+            inMemoryHistoryManager.removeNode(inMemoryHistoryManager.mapLastViewTasks.get(epicId));
         }
         subtasks.clear();
         epics.clear();
@@ -148,9 +148,9 @@ public class InMemoryTaskManager implements TaskManager {
         epics.remove(id);
         for (Integer subtasksId : subtasksIds) {
             subtasks.remove(subtasksId);
-            inMemoryHistoryManager.remove(subtasksId);
+            inMemoryHistoryManager.removeNode(inMemoryHistoryManager.mapLastViewTasks.get(subtasksId));
         }
-        inMemoryHistoryManager.remove(id);
+        inMemoryHistoryManager.removeNode(inMemoryHistoryManager.mapLastViewTasks.get(id));
     }
     @Override
     public void update (Task task) {
