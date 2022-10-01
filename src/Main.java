@@ -2,7 +2,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
+        InMemoryTaskManager<Task> inMemoryTaskManager = new InMemoryTaskManager<>();
         inMemoryTaskManager.add(new Task(1, "Задача1", "Описание задачи 1", "NEW"));
         inMemoryTaskManager.add(new Task(1, "Задача2", "Описание задачи 2", "NEW"));
         inMemoryTaskManager.add(new Epic(1, "Эпик 1", "Описание Эпика 1", "NEW"));

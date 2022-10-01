@@ -1,9 +1,8 @@
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-public class InMemoryTaskManager implements TaskManager {
-    private int nextId = 1;
+public class InMemoryTaskManager<T> implements TaskManager<T> {
+    protected int nextId = 1;
     protected HashMap<Integer, Task> tasks = new HashMap<>();
     protected HashMap<Integer, Epic> epics = new HashMap<>();
     protected HashMap<Integer, Subtask> subtasks = new HashMap<>();
@@ -11,23 +10,20 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     @Override
-    public int add (Task task) {
+    public void add (Task task) {
         task.setTaskId(nextId++);
         tasks.put(task.getTaskId(), task);
-        return task.getTaskId();
     }
     @Override
-    public int add (Epic epic) {
+    public void add (Epic epic) {
         epic.setTaskId(nextId++);
         epics.put(epic.getTaskId(), epic);
-        return epic.getTaskId();
     }
     @Override
-    public int add (Subtask subtask) {
+    public void add (Subtask subtask) {
         subtask.setTaskId(nextId++);
         subtasks.put(subtask.getTaskId(), subtask);
         addSubtaskToEpic(subtask);
-        return subtask.getTaskId();
     }
     @Override
     public void addSubtaskToEpic (Subtask subtask) {

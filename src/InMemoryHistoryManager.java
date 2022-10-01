@@ -65,11 +65,6 @@ public class InMemoryHistoryManager<T> implements HistoryManager<T> {
         size--;
     }
 
-//    @Override
-//    public void remove (int id) {
-//        lastViewTasks.remove(id);
-//    }
-
     @Override
     public String toString() {
         getTasks();

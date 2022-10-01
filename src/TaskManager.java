@@ -1,12 +1,8 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+public interface TaskManager<T> {
 
-public interface TaskManager {
-
-        int add (Task task);
-        int add (Epic epic);
-        int add (Subtask subtask);
+        void add (Task task);
+        void add (Epic epic);
+        void add (Subtask subtask);
         void addSubtaskToEpic (Subtask subtask);
 
         String getAllTasks ();
@@ -16,7 +12,7 @@ public interface TaskManager {
         String getSubtasksOneEpic (int epicId);
         String getAllEpics ();
         String getOneEpic (int id);
-        HistoryManager getHistory();
+        HistoryManager<Task> getHistory();
 
         void deleteAllTasks ();
         void deleteOneTask (int id);
