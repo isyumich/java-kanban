@@ -1,6 +1,6 @@
 public class Managers<T extends TaskManager<T>> {
 
-    public TaskManager<T> getDefault(TaskManager<T> task) {
+    public static TaskManager<Task> getDefault(TaskManager<Task> task) {
         return task;
     }
 

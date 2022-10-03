@@ -3,14 +3,14 @@ import java.util.HashMap;
 import java.util.List;
 
 public class InMemoryHistoryManager<T> implements HistoryManager<T> {
-        private Node<T> head;
-        private Node<T> tail;
-        private int size = 0;
+    private Node<T> head;
+    private Node<T> tail;
+    private int size = 0;
 
-        protected List<Task> lastViewTasks = new ArrayList<>();
-        protected HashMap<Integer, Node<T>> mapLastViewTasks = new HashMap<>();
+    protected List<Task> lastViewTasks = new ArrayList<>();
+    protected HashMap<Integer, Node<T>> mapLastViewTasks = new HashMap<>();
 
-    public void linkLast (Task element) {
+    public void linkLast(Task element) {
         final Node<T> oldTail = tail;
         final Node<T> newNode = new Node<>(tail, element, null);
         tail = newNode;
@@ -23,7 +23,12 @@ public class InMemoryHistoryManager<T> implements HistoryManager<T> {
     }
 
     @Override
-    public void getTasks () {
+    public List<Task> getLastViewTask() {
+        return lastViewTasks;
+    }
+
+    @Override
+    public void getTasks() {
         lastViewTasks.clear();
         for (Node<T> x = head; x != null; ) {
             Node<T> next = x.next;
@@ -33,7 +38,7 @@ public class InMemoryHistoryManager<T> implements HistoryManager<T> {
     }
 
     @Override
-    public void add (Task task) {
+    public void add(Task task) {
         if (mapLastViewTasks.containsKey(task.getTaskId())) {
             Node<T> node = mapLastViewTasks.get(task.getTaskId());
             removeNode(node);
@@ -43,7 +48,7 @@ public class InMemoryHistoryManager<T> implements HistoryManager<T> {
     }
 
     @Override
-    public void removeNode (Node<T> node) {
+    public void removeNode(Node<T> node) {
         mapLastViewTasks.remove(node.data.getTaskId());
         final Node<T> prev = node.prev;
         final Node<T> next = node.next;
@@ -68,8 +73,10 @@ public class InMemoryHistoryManager<T> implements HistoryManager<T> {
     @Override
     public String toString() {
         getTasks();
-        return "InMemoryHistoryManager{" +
-                "lastViewTasks=" + lastViewTasks +
-                '}';
+        StringBuilder historyInfo = new StringBuilder("История просмотров: " + '\n');
+        for (Task lastViewTask: lastViewTasks) {
+            historyInfo.append(lastViewTask);
+        }
+        return historyInfo.toString();
     }
 }

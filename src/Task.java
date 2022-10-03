@@ -3,7 +3,6 @@ public class Task {
     protected String taskName;
     protected String taskDescription;
     protected String taskStatus;
-    protected TasksStatus tasksStatus;
 
     public Task(int taskId, String taskName, String taskDescription, String taskStatus) {
         this.taskId = taskId;
@@ -46,11 +45,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "taskId=" + taskId +
-                ", taskName='" + taskName + '\'' +
-                ", taskDescription='" + taskDescription + '\'' +
-                ", taskStatus='" + taskStatus + '\'' +
-                '}';
+        return taskId + ", " + TasksType.TASK + ", " + taskName + ", "
+                + taskStatus + ", " + taskDescription + "," + '\n';
     }
 }

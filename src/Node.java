@@ -3,7 +3,7 @@ public class Node<T> {
     public Node<T> prev;
     public Node<T> next;
 
-    public Node (Node<T> prev, Task data, Node<T> next) {
+    public Node(Node<T> prev, Task data, Node<T> next) {
         this.prev = prev;
         this.data = data;
         this.next = next;
