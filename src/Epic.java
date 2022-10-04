@@ -10,8 +10,8 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return taskId + ", " + TasksType.EPIC + ", " + taskName + ", "
-                + taskStatus + ", " + taskDescription + "," + '\n';
+        return taskId + "," + TasksType.EPIC + "," + taskName + ","
+                + taskStatus + "," + taskDescription + ",";
     }
 
     public ArrayList<Integer> getSubtasksIds() {

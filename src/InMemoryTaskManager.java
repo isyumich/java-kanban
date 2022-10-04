@@ -44,7 +44,7 @@ public class InMemoryTaskManager<T> implements TaskManager<T> {
     public String getAllTasks() {
         StringBuilder allTasksInfo = new StringBuilder();
         for (Integer integer : tasks.keySet()) {
-            allTasksInfo.append(getOneTask(integer));
+            allTasksInfo.append(getOneTask(integer)).append('\n');
         }
         return allTasksInfo.toString();
     }
@@ -59,7 +59,7 @@ public class InMemoryTaskManager<T> implements TaskManager<T> {
     public String getAllSubTasks() {
         StringBuilder allSubTasksInfo = new StringBuilder();
         for (Integer integer : subtasks.keySet()) {
-            allSubTasksInfo.append(getOneSubTask(integer));
+            allSubTasksInfo.append(getOneSubTask(integer)).append('\n');
         }
         return allSubTasksInfo.toString();
     }
@@ -75,21 +75,16 @@ public class InMemoryTaskManager<T> implements TaskManager<T> {
         ArrayList<Integer> subtasksIds = epics.get(epicId).getSubtasksIds();
         StringBuilder allSubTasksInfo = new StringBuilder();
         for (Integer subtaskId : subtasksIds) {
-            allSubTasksInfo.append(getOneSubTask(subtaskId));
+            allSubTasksInfo.append(getOneSubTask(subtaskId)).append('\n');
         }
         return allSubTasksInfo.toString();
-    }
-
-    @Override
-    public HistoryManager<Task> getHistory() {
-        return Managers.getDefaultHistory(inMemoryHistoryManager);
     }
 
     @Override
     public String getAllEpics() {
         StringBuilder allEpicsInfo = new StringBuilder();
         for (Integer integer : epics.keySet()) {
-            allEpicsInfo.append(getOneEpic(integer));
+            allEpicsInfo.append(getOneEpic(integer)).append('\n');
         }
         return allEpicsInfo.toString();
     }
@@ -98,6 +93,11 @@ public class InMemoryTaskManager<T> implements TaskManager<T> {
     public String getOneEpic(int id) {
         inMemoryHistoryManager.add(epics.get(id));
         return epics.get(id).toString();
+    }
+
+    @Override
+    public HistoryManager<Task> getHistory() {
+        return Managers.getDefaultHistory(inMemoryHistoryManager);
     }
 
     @Override

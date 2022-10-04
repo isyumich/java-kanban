@@ -75,7 +75,7 @@ public class InMemoryHistoryManager<T> implements HistoryManager<T> {
         getTasks();
         StringBuilder historyInfo = new StringBuilder("История просмотров: " + '\n');
         for (Task lastViewTask: lastViewTasks) {
-            historyInfo.append(lastViewTask);
+            historyInfo.append(lastViewTask).append('\n');
         }
         return historyInfo.toString();
     }

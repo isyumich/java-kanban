@@ -8,8 +8,8 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return taskId + ", " + TasksType.SUBTASK + ", " + taskName + ", "
-                + taskStatus + ", " + taskDescription + ", " + epicId + '\n';
+        return taskId + "," + TasksType.SUBTASK + "," + taskName + ","
+                + taskStatus + "," + taskDescription + "," + epicId;
     }
 
     public int getEpicId() {
