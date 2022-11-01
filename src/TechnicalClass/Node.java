@@ -1,3 +1,7 @@
+package TechnicalClass;
+
+import Task.Task;
+
 public class Node<T> {
     public Task data;
     public Node<T> prev;

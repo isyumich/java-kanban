@@ -1,3 +1,8 @@
+package Manager;
+
+import Task.Task;
+import TechnicalClass.Node;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +17,7 @@ public class InMemoryHistoryManager<T> implements HistoryManager<T> {
 
     public void linkLast(Task element) {
         final Node<T> oldTail = tail;
-        final Node<T> newNode = new Node<>(tail, element, null);
+        final Node<T> newNode = new Node<T>(tail, element, null);
         tail = newNode;
         if (oldTail == null) {
             head = newNode;
@@ -24,6 +29,7 @@ public class InMemoryHistoryManager<T> implements HistoryManager<T> {
 
     @Override
     public List<Task> getLastViewTask() {
+        getTasks();
         return lastViewTasks;
     }
 
@@ -73,7 +79,7 @@ public class InMemoryHistoryManager<T> implements HistoryManager<T> {
     @Override
     public String toString() {
         getTasks();
-        StringBuilder historyInfo = new StringBuilder("История просмотров: " + '\n');
+        StringBuilder historyInfo = new StringBuilder("Browsing history: " + '\n');
         for (Task lastViewTask: lastViewTasks) {
             historyInfo.append(lastViewTask).append('\n');
         }

@@ -1,6 +1,10 @@
-public class Managers<T extends TaskManager<T>> {
+package Manager;
 
-    public static TaskManager<Task> getDefault(TaskManager<Task> task) {
+import Task.Task;
+
+public class Managers<T extends TaskManager> {
+
+    public static TaskManager getDefault(TaskManager task) {
         return task;
     }
 
