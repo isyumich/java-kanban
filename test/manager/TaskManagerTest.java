@@ -1,9 +1,9 @@
-package Manager;
+package manager;
 
-import Task.Task;
-import Task.Epic;
-import Task.Subtask;
-import TasksInfo.TasksStatus;
+import task.Task;
+import task.Epic;
+import task.Subtask;
+import taskinfo.TasksStatus;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -14,11 +14,23 @@ import static org.junit.jupiter.api.Assertions.*;
 abstract class TaskManagerTest <T extends TaskManager> {
     T taskManager;
 
+    public Task createTask (String taskStatus, Instant startTime) {
+        return new Task(1, "Task", "Description Task", taskStatus, 1440L, startTime);
+    }
+
+    public Subtask createSubtask (String taskStatus, Instant startTime, int epicId) {
+        return new Subtask(1, "Subtask for Epic ", "Description Subtask for Epic", taskStatus,1440L, startTime, epicId);
+    }
+
+    public Epic createEpic (String taskStatus, Instant startTime) {
+        return new Epic(1, "Epic", "Description Epic", taskStatus, 1440L, startTime);
+    }
+
     /*Тесты на создание задач*/
     @Test
     public void shouldAddTaskStandard() {
         HashMap<Integer, Task> tasksForTest = new HashMap<>();
-        Task task = new Task(1, "Task 1", "Description Task 1", "NEW", 1440L, Instant.ofEpochSecond(1664640000));
+        Task task = createTask(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664640000));
         tasksForTest.put(1, task);
         taskManager.add(task);
         HashMap<Integer, Task> tasksFromManager = taskManager.getTasksMap();
@@ -41,7 +53,7 @@ abstract class TaskManagerTest <T extends TaskManager> {
     @Test
     public void shouldAddTaskIfWrongTaskId() {
         HashMap<Integer, Task> tasksForTest = new HashMap<>();
-        Task task = new Task(999, "Task 1", "Description Task 1", "NEW", 1440L, Instant.ofEpochSecond(1664640000));
+        Task task = createTask(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664640000));
         tasksForTest.put(1, task);
         taskManager.add(task);
         HashMap<Integer, Task> tasksFromManager = taskManager.getTasksMap();
@@ -55,7 +67,7 @@ abstract class TaskManagerTest <T extends TaskManager> {
     @Test
     public void shouldAddEpicStandard() {
         HashMap<Integer, Epic> epicsForTest = new HashMap<>();
-        Epic epic = new Epic(1, "Epic 1", "Description Epic 1", "NEW", 1440L, Instant.ofEpochSecond(1664985600));
+        Epic epic = createEpic(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664985600));
         epicsForTest.put(1, epic);
         taskManager.add(epic);
         HashMap<Integer, Epic> epicsFromManager = taskManager.getEpicsMap();
@@ -77,7 +89,7 @@ abstract class TaskManagerTest <T extends TaskManager> {
     @Test
     public void shouldAddEpicIfWrongTaskId() {
         HashMap<Integer, Epic> epicsForTest = new HashMap<>();
-        Epic epic = new Epic(999, "Epic 1", "Description Epic 1", "NEW", 1440L, Instant.ofEpochSecond(1664985600));
+        Epic epic = createEpic(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664985600));
         epicsForTest.put(1, epic);
         taskManager.add(epic);
         HashMap<Integer, Epic> epicsFromManager = taskManager.getEpicsMap();
@@ -89,9 +101,10 @@ abstract class TaskManagerTest <T extends TaskManager> {
     /*Тесты на создание подзадач*/
     @Test
     public void shouldAddSubtaskStandard() {
-        taskManager.add(new Epic(999, "Epic 1", "Description Epic 1", "NEW", 1440L, Instant.ofEpochSecond(1664985600)));
+        Epic epic = createEpic(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664985600));
+        taskManager.add(epic);
         HashMap<Integer, Subtask> tasksForTest = new HashMap<>();
-        Subtask subtask = new Subtask(1, "Task 1", "Description Task 1", "NEW", 1440L, Instant.ofEpochSecond(1664640000), 1);
+        Subtask subtask = createSubtask(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1665158400), epic.getTaskId());
         tasksForTest.put(2, subtask);
         taskManager.add(subtask);
         HashMap<Integer, Subtask> tasksFromManager = taskManager.getSubtasksMap();
@@ -112,9 +125,10 @@ abstract class TaskManagerTest <T extends TaskManager> {
 
     @Test
     public void shouldAddSubtaskIfWrongTaskId() {
-        taskManager.add(new Epic(999, "Epic 1", "Description Epic 1", "NEW", 1440L, Instant.ofEpochSecond(1664985600)));
+        Epic epic = createEpic(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664985600));
+        taskManager.add(epic);
         HashMap<Integer, Subtask> tasksForTest = new HashMap<>();
-        Subtask subtask = new Subtask(999, "Task 1", "Description Task 1", "NEW", 1440L, Instant.ofEpochSecond(1664640000), 1);
+        Subtask subtask = createSubtask(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1665158400), epic.getTaskId());
         tasksForTest.put(2, subtask);
         taskManager.add(subtask);
         HashMap<Integer, Subtask> tasksFromManager = taskManager.getSubtasksMap();
@@ -128,9 +142,9 @@ abstract class TaskManagerTest <T extends TaskManager> {
     @Test
     public void shouldUpdateTaskStandard () {
         HashMap<Integer, Task> tasksForTest = new HashMap<>();
-        Task task = new Task(1, "Task 1", "Description Task 1", "NEW", 1440L, Instant.ofEpochSecond(1664640000));
+        Task task = createTask(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664640000));
         taskManager.add(task);
-        task.setDescription("Updated Description Task 1");
+        task.setDescription("Updated Description Task");
         tasksForTest.put(1, task);
         taskManager.update(task);
         HashMap<Integer, Task> tasksFromManager = taskManager.getTasksMap();
@@ -155,9 +169,9 @@ abstract class TaskManagerTest <T extends TaskManager> {
     @Test
     public void shouldUpdateEpicStandard () {
         HashMap<Integer, Epic> epicsForTest = new HashMap<>();
-        Epic epic = new Epic(1, "Epic 1", "Description Epic 1", "NEW", 1440L, Instant.ofEpochSecond(1664985600));
+        Epic epic = createEpic(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664985600));
         taskManager.add(epic);
-        epic.setDescription("Updated Description Epic 1");
+        epic.setDescription("Updated Description Epic");
         epicsForTest.put(1, epic);
         taskManager.update(epic);
         HashMap<Integer, Epic> epicsFromManager = taskManager.getEpicsMap();
@@ -179,9 +193,10 @@ abstract class TaskManagerTest <T extends TaskManager> {
     /*Тест методов апдейта подзадач*/
     @Test
     public void shouldUpdateSubtaskStandard () {
-        taskManager.add(new Epic(999, "Epic 1", "Description Epic 1", "NEW", 1440L, Instant.ofEpochSecond(1664985600)));
+        Epic epic = createEpic(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664985600));
+        taskManager.add(epic);
         HashMap<Integer, Subtask> subtasksForTest = new HashMap<>();
-        Subtask subtask = new Subtask(1, "Task 1", "Description Task 1", "NEW", 1440L, Instant.ofEpochSecond(1664640000), 1);
+        Subtask subtask = createSubtask(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1665158400), epic.getTaskId());
         taskManager.add(subtask);
         subtask.setDescription("Updated Description Task 1");
         subtasksForTest.put(2, subtask);
@@ -206,7 +221,7 @@ abstract class TaskManagerTest <T extends TaskManager> {
     @Test
     public void shouldDeleteOneTask () {
         HashMap<Integer, Task> tasksForTest = new HashMap<>();
-        Task task = new Task(1, "Task 1", "Description Task 1", "NEW", 1440L, Instant.ofEpochSecond(1664640000));
+        Task task = createTask(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664640000));
         taskManager.add(task);
         taskManager.deleteOneTask(1);
         HashMap<Integer, Task> tasksFromManager = taskManager.getTasksMap();
@@ -216,8 +231,8 @@ abstract class TaskManagerTest <T extends TaskManager> {
     @Test
     public void shouldDeleteAllTasks () {
         HashMap <Integer, Task> tasksForTest = new HashMap<>();
-        Task task1 = new Task(1, "Task 1", "Description Task 1", "NEW", 1440L, Instant.ofEpochSecond(1664640000));
-        Task task2 = new Task(1, "Task 2", "Description Task 2", "NEW", 1440L, Instant.ofEpochSecond(1664812800));
+        Task task1 = createTask(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664640000));
+        Task task2 = createTask(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664640000));
         taskManager.add(task1);
         taskManager.add(task2);
         taskManager.deleteAllTasks();
@@ -228,7 +243,7 @@ abstract class TaskManagerTest <T extends TaskManager> {
     @Test
     public void shouldDeleteOneEpic () {
         HashMap<Integer, Epic> epicsForTest = new HashMap<>();
-        Epic epic = new Epic(1, "Epic 1", "Description Epic 1", "NEW", 1440L, Instant.ofEpochSecond(1664985600));
+        Epic epic = createEpic(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664985600));
         taskManager.add(epic);
         taskManager.deleteOneEpic(1);
         HashMap<Integer, Task> tasksFromManager = taskManager.getTasksMap();
@@ -238,8 +253,8 @@ abstract class TaskManagerTest <T extends TaskManager> {
     @Test
     public void shouldDeleteAllEpics () {
         HashMap <Integer, Epic> epicsForTest = new HashMap<>();
-        Epic epic1 = new Epic(1, "Epic 1", "Description Epic 1", "NEW", 1440L, Instant.ofEpochSecond(1664985600));
-        Epic epic2 = new Epic(1, "Epic 1", "Description Epic 1", "NEW", 1440L, Instant.ofEpochSecond(1665504000));
+        Epic epic1 = createEpic(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664985600));
+        Epic epic2 = createEpic(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664640000));
         taskManager.add(epic1);
         taskManager.add(epic2);
         taskManager.deleteAllEpics();
@@ -252,9 +267,9 @@ abstract class TaskManagerTest <T extends TaskManager> {
     @Test
     public void shouldDeleteOneSubtask () {
         HashMap<Integer, Subtask> subtasksForTest = new HashMap<>();
-        Epic epic = new Epic(1, "Epic 1", "Description Epic 1", "NEW", 1440L, Instant.ofEpochSecond(1664985600));
+        Epic epic = createEpic(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664985600));
         taskManager.add(epic);
-        Subtask subtask = new Subtask(1, "Subtask 1 Epic 1", "Description Subtask 1 Epic 1", "NEW",1440L, Instant.ofEpochSecond(1665158400), 1);
+        Subtask subtask = createSubtask(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1665158400), epic.getTaskId());
         taskManager.add(subtask);
         taskManager.deleteOneSubTask(2);
         HashMap<Integer, Subtask> subtasksFromManager = taskManager.getSubtasksMap();
@@ -264,10 +279,10 @@ abstract class TaskManagerTest <T extends TaskManager> {
     @Test
     public void shouldDeleteAllSubtasks () {
         HashMap<Integer, Subtask> subtasksForTest = new HashMap<>();
-        Epic epic = new Epic(1, "Epic 1", "Description Epic 1", "NEW", 1440L, Instant.ofEpochSecond(1664985600));
+        Epic epic = createEpic(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664985600));
         taskManager.add(epic);
-        Subtask subtask1 = new Subtask(1, "Subtask 1 Epic 1", "Description Subtask 1 Epic 1", "NEW",1440L, Instant.ofEpochSecond(1665158400), 1);
-        Subtask subtask2 = new Subtask(1, "Subtask 2 Epic 1", "Description Subtask 2 Epic 1", "NEW",1440L, Instant.ofEpochSecond(1665331200), 1);
+        Subtask subtask1 = createSubtask(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1665158400), epic.getTaskId());
+        Subtask subtask2 = createSubtask(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1665331200), epic.getTaskId());
         taskManager.add(subtask1);
         taskManager.add(subtask2);
         taskManager.deleteAllSubTasks();
@@ -278,42 +293,46 @@ abstract class TaskManagerTest <T extends TaskManager> {
     /*Тест методов расчёта статуса эпиков*/
     @Test
     void shouldNewStatusForEmptyEpic () {
-        taskManager.add(new Epic(1, "Epic 1", "Description Epic 1", "DONE", 1440L, Instant.ofEpochSecond(1664985600)));
+        taskManager.add(createEpic(TasksStatus.DONE.toString(), Instant.ofEpochSecond(1664985600)));
 
         assertEquals(TasksStatus.NEW.toString(), taskManager.getEpicsMap().get(1).getStatus());
     }
 
     @Test
     void shouldNewStatusForAllNewSubtasks () {
-        taskManager.add(new Epic(1, "Epic 1", "Description Epic 1", "DONE", 1440L, Instant.ofEpochSecond(1664985600)));
-        taskManager.add(new Subtask(1, "Subtask 1 Epic 1", "Description Subtask 1 Epic 1", "NEW",1440L, Instant.ofEpochSecond(1665158400), 1));
-        taskManager.add(new Subtask(1, "Subtask 2 Epic 1", "Description Subtask 2 Epic 1", "NEW",1440L, Instant.ofEpochSecond(1665331200), 1));
+        Epic epic = createEpic(TasksStatus.DONE.toString(), Instant.ofEpochSecond(1664985600));
+        taskManager.add(epic);
+        taskManager.add(createSubtask(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1665158400), epic.getTaskId()));
+        taskManager.add(createSubtask(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1665331200), epic.getTaskId()));
         assertEquals(TasksStatus.NEW.toString(), taskManager.getEpicsMap().get(1).getStatus());
     }
 
     @Test
     void shouldNewStatusForAllDoneSubtasks () {
-        taskManager.add(new Epic(1, "Epic 1", "Description Epic 1", "DONE", 1440L, Instant.ofEpochSecond(1664985600)));
-        taskManager.add(new Subtask(1, "Subtask 1 Epic 1", "Description Subtask 1 Epic 1", "DONE",1440L, Instant.ofEpochSecond(1665158400), 1));
-        taskManager.add(new Subtask(1, "Subtask 2 Epic 1", "Description Subtask 2 Epic 1", "DONE",1440L, Instant.ofEpochSecond(1665331200), 1));
+        Epic epic = createEpic(TasksStatus.DONE.toString(), Instant.ofEpochSecond(1664985600));
+        taskManager.add(epic);
+        taskManager.add(createSubtask(TasksStatus.DONE.toString(), Instant.ofEpochSecond(1665158400), epic.getTaskId()));
+        taskManager.add(createSubtask(TasksStatus.DONE.toString(), Instant.ofEpochSecond(1665331200), epic.getTaskId()));
 
         assertEquals(TasksStatus.DONE.toString(), taskManager.getEpicsMap().get(1).getStatus());
     }
 
     @Test
     void shouldNewStatusForDoneAndNewSubtasks () {
-        taskManager.add(new Epic(1, "Epic 1", "Description Epic 1", "DONE", 1440L, Instant.ofEpochSecond(1664985600)));
-        taskManager.add(new Subtask(1, "Subtask 1 Epic 1", "Description Subtask 1 Epic 1", "NEW",1440L, Instant.ofEpochSecond(1665158400), 1));
-        taskManager.add(new Subtask(1, "Subtask 2 Epic 1", "Description Subtask 2 Epic 1", "DONE",1440L, Instant.ofEpochSecond(1665331200), 1));
+        Epic epic = createEpic(TasksStatus.DONE.toString(), Instant.ofEpochSecond(1664985600));
+        taskManager.add(epic);
+        taskManager.add(createSubtask(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1665158400), epic.getTaskId()));
+        taskManager.add(createSubtask(TasksStatus.DONE.toString(), Instant.ofEpochSecond(1665331200), epic.getTaskId()));
 
         assertEquals(TasksStatus.IN_PROGRESS.toString(), taskManager.getEpicsMap().get(1).getStatus());
     }
 
     @Test
     void shouldNewStatusForAllInProgressSubtasks () {
-        taskManager.add(new Epic(1, "Epic 1", "Description Epic 1", "DONE", 1440L, Instant.ofEpochSecond(1664985600)));
-        taskManager.add(new Subtask(1, "Subtask 1 Epic 1", "Description Subtask 1 Epic 1", "IN_PROGRESS",1440L, Instant.ofEpochSecond(1665158400), 1));
-        taskManager.add(new Subtask(1, "Subtask 2 Epic 1", "Description Subtask 2 Epic 1", "IN_PROGRESS",1440L, Instant.ofEpochSecond(1665331200), 1));
+        Epic epic = createEpic(TasksStatus.DONE.toString(), Instant.ofEpochSecond(1664985600));
+        taskManager.add(epic);
+        taskManager.add(createSubtask(TasksStatus.IN_PROGRESS.toString(), Instant.ofEpochSecond(1665158400), epic.getTaskId()));
+        taskManager.add(createSubtask(TasksStatus.IN_PROGRESS.toString(), Instant.ofEpochSecond(1665331200), epic.getTaskId()));
 
         assertEquals(TasksStatus.IN_PROGRESS.toString(), taskManager.getEpicsMap().get(1).getStatus());
     }

@@ -1,6 +1,6 @@
-package TechnicalClass;
+package technicalclass;
 
-import Task.Task;
+import task.Task;
 
 public class Node<T> {
     public Task data;

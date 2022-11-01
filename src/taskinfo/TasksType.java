@@ -1,4 +1,4 @@
-package TasksInfo;
+package taskinfo;
 
 public enum TasksType {
     EPIC,

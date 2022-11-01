@@ -1,6 +1,6 @@
-package Task;
+package task;
 
-import TasksInfo.TasksType;
+import taskinfo.TasksType;
 
 import java.time.Instant;
 import java.util.ArrayList;

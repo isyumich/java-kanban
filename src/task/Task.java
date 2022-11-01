@@ -1,7 +1,7 @@
-package Task;
+package task;
 
-import TasksInfo.TasksStatus;
-import TasksInfo.TasksType;
+import taskinfo.TasksStatus;
+import taskinfo.TasksType;
 
 import java.time.Instant;
 

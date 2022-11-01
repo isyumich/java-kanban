@@ -1,7 +1,7 @@
-import Manager.InMemoryTaskManager;
-import Task.Epic;
-import Task.Subtask;
-import Task.Task;
+import manager.InMemoryTaskManager;
+import task.Epic;
+import task.Subtask;
+import task.Task;
 
 import java.time.Instant;
 

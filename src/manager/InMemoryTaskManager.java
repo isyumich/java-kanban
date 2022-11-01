@@ -1,9 +1,9 @@
-package Manager;
+package manager;
 
-import Task.Epic;
-import Task.Subtask;
-import Task.Task;
-import TasksInfo.TasksStatus;
+import task.Epic;
+import task.Subtask;
+import task.Task;
+import taskinfo.TasksStatus;
 
 import java.time.Instant;
 import java.util.*;

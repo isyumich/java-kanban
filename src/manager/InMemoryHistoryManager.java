@@ -1,7 +1,7 @@
-package Manager;
+package manager;
 
-import Task.Task;
-import TechnicalClass.Node;
+import task.Task;
+import technicalclass.Node;
 
 import java.util.ArrayList;
 import java.util.HashMap;
