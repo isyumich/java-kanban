@@ -11,18 +11,18 @@ import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-abstract class TaskManagerTest <T extends TaskManager> {
+abstract class TaskManagerTest<T extends TaskManager> {
     T taskManager;
 
-    public Task createTask (String taskStatus, Instant startTime) {
+    public Task createTask(String taskStatus, Instant startTime) {
         return new Task(1, "Task", "Description Task", taskStatus, 1440L, startTime);
     }
 
-    public Subtask createSubtask (String taskStatus, Instant startTime, int epicId) {
-        return new Subtask(1, "Subtask for Epic ", "Description Subtask for Epic", taskStatus,1440L, startTime, epicId);
+    public Subtask createSubtask(String taskStatus, Instant startTime, int epicId) {
+        return new Subtask(1, "Subtask for Epic ", "Description Subtask for Epic", taskStatus, 1440L, startTime, epicId);
     }
 
-    public Epic createEpic (String taskStatus, Instant startTime) {
+    public Epic createEpic(String taskStatus, Instant startTime) {
         return new Epic(1, "Epic", "Description Epic", taskStatus, 1440L, startTime);
     }
 
@@ -37,6 +37,7 @@ abstract class TaskManagerTest <T extends TaskManager> {
         assertNotNull(task.getStatus());
         assertEquals(tasksForTest, tasksFromManager);
     }
+
     @Test
     public void shouldAddTaskIfNull() {
         final NullPointerException exception = assertThrows(
@@ -74,6 +75,7 @@ abstract class TaskManagerTest <T extends TaskManager> {
         assertNotNull(epic.getStatus());
         assertEquals(epicsForTest, epicsFromManager);
     }
+
     @Test
     public void shouldAddEpicIfNull() {
         final NullPointerException exception = assertThrows(
@@ -111,6 +113,7 @@ abstract class TaskManagerTest <T extends TaskManager> {
         assertNotNull(subtask.getStatus());
         assertEquals(tasksForTest, tasksFromManager);
     }
+
     @Test
     public void shouldAddSubtaskIfNull() {
         final NullPointerException exception = assertThrows(
@@ -140,7 +143,7 @@ abstract class TaskManagerTest <T extends TaskManager> {
 
     /*Тест методов апдейта задач*/
     @Test
-    public void shouldUpdateTaskStandard () {
+    public void shouldUpdateTaskStandard() {
         HashMap<Integer, Task> tasksForTest = new HashMap<>();
         Task task = createTask(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664640000));
         taskManager.add(task);
@@ -151,8 +154,9 @@ abstract class TaskManagerTest <T extends TaskManager> {
         assertNotNull(task.getStatus());
         assertEquals(tasksForTest, tasksFromManager);
     }
+
     @Test
-    public void shouldUpdateTaskIfNull () {
+    public void shouldUpdateTaskIfNull() {
         final NullPointerException exception = assertThrows(
                 NullPointerException.class,
 
@@ -167,7 +171,7 @@ abstract class TaskManagerTest <T extends TaskManager> {
 
     /*Тест методов апдейта эпиков*/
     @Test
-    public void shouldUpdateEpicStandard () {
+    public void shouldUpdateEpicStandard() {
         HashMap<Integer, Epic> epicsForTest = new HashMap<>();
         Epic epic = createEpic(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664985600));
         taskManager.add(epic);
@@ -178,8 +182,9 @@ abstract class TaskManagerTest <T extends TaskManager> {
         assertNotNull(epic.getStatus());
         assertEquals(epicsForTest, epicsFromManager);
     }
+
     @Test
-    public void shouldUpdateEpicIfNull () {
+    public void shouldUpdateEpicIfNull() {
         final NullPointerException exception = assertThrows(
                 NullPointerException.class,
                 () -> {
@@ -192,7 +197,7 @@ abstract class TaskManagerTest <T extends TaskManager> {
 
     /*Тест методов апдейта подзадач*/
     @Test
-    public void shouldUpdateSubtaskStandard () {
+    public void shouldUpdateSubtaskStandard() {
         Epic epic = createEpic(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664985600));
         taskManager.add(epic);
         HashMap<Integer, Subtask> subtasksForTest = new HashMap<>();
@@ -205,8 +210,9 @@ abstract class TaskManagerTest <T extends TaskManager> {
         assertNotNull(subtask.getStatus());
         assertEquals(subtasksForTest, subtasksFromManager);
     }
+
     @Test
-    public void shouldUpdateSubtaskIfNull () {
+    public void shouldUpdateSubtaskIfNull() {
         final NullPointerException exception = assertThrows(
                 NullPointerException.class,
                 () -> {
@@ -219,7 +225,7 @@ abstract class TaskManagerTest <T extends TaskManager> {
 
     /*Тест методов по удалению задач*/
     @Test
-    public void shouldDeleteOneTask () {
+    public void shouldDeleteOneTask() {
         HashMap<Integer, Task> tasksForTest = new HashMap<>();
         Task task = createTask(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664640000));
         taskManager.add(task);
@@ -229,8 +235,8 @@ abstract class TaskManagerTest <T extends TaskManager> {
     }
 
     @Test
-    public void shouldDeleteAllTasks () {
-        HashMap <Integer, Task> tasksForTest = new HashMap<>();
+    public void shouldDeleteAllTasks() {
+        HashMap<Integer, Task> tasksForTest = new HashMap<>();
         Task task1 = createTask(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664640000));
         Task task2 = createTask(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664640000));
         taskManager.add(task1);
@@ -239,9 +245,10 @@ abstract class TaskManagerTest <T extends TaskManager> {
         HashMap<Integer, Task> tasksFromManager = taskManager.getTasksMap();
         assertEquals(tasksForTest, tasksFromManager);
     }
+
     /*Тест методов по удалению эпиков*/
     @Test
-    public void shouldDeleteOneEpic () {
+    public void shouldDeleteOneEpic() {
         HashMap<Integer, Epic> epicsForTest = new HashMap<>();
         Epic epic = createEpic(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664985600));
         taskManager.add(epic);
@@ -251,8 +258,8 @@ abstract class TaskManagerTest <T extends TaskManager> {
     }
 
     @Test
-    public void shouldDeleteAllEpics () {
-        HashMap <Integer, Epic> epicsForTest = new HashMap<>();
+    public void shouldDeleteAllEpics() {
+        HashMap<Integer, Epic> epicsForTest = new HashMap<>();
         Epic epic1 = createEpic(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664985600));
         Epic epic2 = createEpic(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664640000));
         taskManager.add(epic1);
@@ -265,7 +272,7 @@ abstract class TaskManagerTest <T extends TaskManager> {
     /*Тест методов по удалению подзадач*/
 
     @Test
-    public void shouldDeleteOneSubtask () {
+    public void shouldDeleteOneSubtask() {
         HashMap<Integer, Subtask> subtasksForTest = new HashMap<>();
         Epic epic = createEpic(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664985600));
         taskManager.add(epic);
@@ -277,7 +284,7 @@ abstract class TaskManagerTest <T extends TaskManager> {
     }
 
     @Test
-    public void shouldDeleteAllSubtasks () {
+    public void shouldDeleteAllSubtasks() {
         HashMap<Integer, Subtask> subtasksForTest = new HashMap<>();
         Epic epic = createEpic(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1664985600));
         taskManager.add(epic);
@@ -292,14 +299,14 @@ abstract class TaskManagerTest <T extends TaskManager> {
 
     /*Тест методов расчёта статуса эпиков*/
     @Test
-    void shouldNewStatusForEmptyEpic () {
+    void shouldNewStatusForEmptyEpic() {
         taskManager.add(createEpic(TasksStatus.DONE.toString(), Instant.ofEpochSecond(1664985600)));
 
         assertEquals(TasksStatus.NEW.toString(), taskManager.getEpicsMap().get(1).getStatus());
     }
 
     @Test
-    void shouldNewStatusForAllNewSubtasks () {
+    void shouldNewStatusForAllNewSubtasks() {
         Epic epic = createEpic(TasksStatus.DONE.toString(), Instant.ofEpochSecond(1664985600));
         taskManager.add(epic);
         taskManager.add(createSubtask(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1665158400), epic.getTaskId()));
@@ -308,7 +315,7 @@ abstract class TaskManagerTest <T extends TaskManager> {
     }
 
     @Test
-    void shouldNewStatusForAllDoneSubtasks () {
+    void shouldNewStatusForAllDoneSubtasks() {
         Epic epic = createEpic(TasksStatus.DONE.toString(), Instant.ofEpochSecond(1664985600));
         taskManager.add(epic);
         taskManager.add(createSubtask(TasksStatus.DONE.toString(), Instant.ofEpochSecond(1665158400), epic.getTaskId()));
@@ -318,7 +325,7 @@ abstract class TaskManagerTest <T extends TaskManager> {
     }
 
     @Test
-    void shouldNewStatusForDoneAndNewSubtasks () {
+    void shouldNewStatusForDoneAndNewSubtasks() {
         Epic epic = createEpic(TasksStatus.DONE.toString(), Instant.ofEpochSecond(1664985600));
         taskManager.add(epic);
         taskManager.add(createSubtask(TasksStatus.NEW.toString(), Instant.ofEpochSecond(1665158400), epic.getTaskId()));
@@ -328,7 +335,7 @@ abstract class TaskManagerTest <T extends TaskManager> {
     }
 
     @Test
-    void shouldNewStatusForAllInProgressSubtasks () {
+    void shouldNewStatusForAllInProgressSubtasks() {
         Epic epic = createEpic(TasksStatus.DONE.toString(), Instant.ofEpochSecond(1664985600));
         taskManager.add(epic);
         taskManager.add(createSubtask(TasksStatus.IN_PROGRESS.toString(), Instant.ofEpochSecond(1665158400), epic.getTaskId()));

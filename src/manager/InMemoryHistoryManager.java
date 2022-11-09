@@ -80,7 +80,7 @@ public class InMemoryHistoryManager<T> implements HistoryManager<T> {
     public String toString() {
         getTasks();
         StringBuilder historyInfo = new StringBuilder("Browsing history: " + '\n');
-        for (Task lastViewTask: lastViewTasks) {
+        for (Task lastViewTask : lastViewTasks) {
             historyInfo.append(lastViewTask).append('\n');
         }
         return historyInfo.toString();

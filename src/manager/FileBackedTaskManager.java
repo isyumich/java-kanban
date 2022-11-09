@@ -14,12 +14,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     protected File file;
     protected static final String FIRST_ROW_CSV = "id,type,name,status,description,startTime,duration,epicId";
 
-    public FileBackedTaskManager(File file) {
-        this.file = file;
+    public FileBackedTaskManager(String pathName) {
+        this.file = new File(pathName);
     }
 
+
     public static void main(String[] args) {
-        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(new File("src\\Manager\\TaskManager.csv"));
+        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager("src\\Manager\\TaskManager.csv");
         fileBackedTaskManager.add(new Task(1, "Task 1", "Description Task 1", "NEW", 1440L, Instant.ofEpochSecond(1664640000)));
         fileBackedTaskManager.add(new Task(1, "Task 2", "Description Task 2", "NEW", 1440L, Instant.ofEpochSecond(1664812800)));
         fileBackedTaskManager.add(new Epic(1, "Epic 1", "Description Epic 1", "NEW", 1440L, Instant.ofEpochSecond(1664985600)));
@@ -36,7 +37,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         System.out.println("Browsing task 2: " + '\n' + fileBackedTaskManager.getOneTask(2));
         System.out.println(fileBackedTaskManager.getHistory().toString());
 
-        FileBackedTaskManager fileBackedTaskManagerNew = new FileBackedTaskManager(new File("src\\Manager\\TaskManager.csv"));
+        FileBackedTaskManager fileBackedTaskManagerNew = new FileBackedTaskManager("src\\Manager\\TaskManager.csv");
         System.out.println("Watch info about new manager");
         fileBackedTaskManagerNew.loadFromFile(fileBackedTaskManagerNew.file);
         System.out.println(fileBackedTaskManagerNew.getHistory().toString());

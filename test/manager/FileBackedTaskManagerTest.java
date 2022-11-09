@@ -20,9 +20,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     public final Path path = Path.of("src\\Manager\\TaskManager.csv");
     File file = new File(String.valueOf(path));
+
     @BeforeEach
     public void beforeEach() {
-        taskManager = new FileBackedTaskManager(file);
+        taskManager = new FileBackedTaskManager(String.valueOf(path));
     }
 
     @AfterEach
@@ -48,7 +49,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
         Subtask subtask = new Subtask(1, "Epic 1", "Description Epic 1", "NEW", 1440L, Instant.ofEpochSecond(1664985600), 2);
         taskManager.add(subtask);
         subtasksForTest.put(3, subtask);
-        FileBackedTaskManager fileManager = new FileBackedTaskManager(file);
+        FileBackedTaskManager fileManager = new FileBackedTaskManager(String.valueOf(path));
         fileManager.loadFromFile(file);
         assertEquals(tasksForTest, taskManager.tasks);
         assertEquals(epicsForTest, taskManager.epics);
@@ -57,7 +58,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
     @Test
     public void shouldSaveAndLoadIfEmptyAll() {
-        FileBackedTaskManager fileManager = new FileBackedTaskManager(file);
+        FileBackedTaskManager fileManager = new FileBackedTaskManager(String.valueOf(path));
         fileManager.save();
         fileManager.loadFromFile(file);
         assertTrue(taskManager.tasks.isEmpty());
@@ -67,7 +68,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
     @Test
     public void shouldSaveAndLoadEmptyHistory() {
-        FileBackedTaskManager fileManager = new FileBackedTaskManager(file);
+        FileBackedTaskManager fileManager = new FileBackedTaskManager(String.valueOf(path));
         fileManager.save();
         fileManager.loadFromFile(file);
         assertTrue(taskManager.getHistory().getLastViewTask().isEmpty());

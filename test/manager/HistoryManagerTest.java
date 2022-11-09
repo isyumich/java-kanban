@@ -24,7 +24,7 @@ class HistoryManagerTest {
     public void shouldAddTasksEpicsSubtasksToHistory() {
         Task task = new Task(1, "Task 1", "Description Task 1", "NEW", 1440L, Instant.ofEpochSecond(1664640000));
         Epic epic = new Epic(1, "Epic 1", "Description Epic 1", "NEW", 1440L, Instant.ofEpochSecond(1664985600));
-        Subtask subtask = new Subtask(1, "Subtask 1 Epic 1", "Description Subtask 1 Epic 1", "NEW",1440L, Instant.ofEpochSecond(1665158400), 2);
+        Subtask subtask = new Subtask(1, "Subtask 1 Epic 1", "Description Subtask 1 Epic 1", "NEW", 1440L, Instant.ofEpochSecond(1665158400), 2);
         taskManager.add(task);
         taskManager.add(epic);
         taskManager.add(subtask);
@@ -38,7 +38,7 @@ class HistoryManagerTest {
     public void shouldGetHistoryWithoutDoubles() {
         Task task = new Task(1, "Task 1", "Description Task 1", "NEW", 1440L, Instant.ofEpochSecond(1664640000));
         Epic epic = new Epic(1, "Epic 1", "Description Epic 1", "NEW", 1440L, Instant.ofEpochSecond(1664985600));
-        Subtask subtask = new Subtask(1, "Subtask 1 Epic 1", "Description Subtask 1 Epic 1", "NEW",1440L, Instant.ofEpochSecond(1665158400), 2);
+        Subtask subtask = new Subtask(1, "Subtask 1 Epic 1", "Description Subtask 1 Epic 1", "NEW", 1440L, Instant.ofEpochSecond(1665158400), 2);
         taskManager.add(task);
         taskManager.add(epic);
         taskManager.add(subtask);
