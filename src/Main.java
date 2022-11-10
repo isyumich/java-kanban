@@ -4,32 +4,48 @@ import servers.KVServer;
 import task.Epic;
 import task.Subtask;
 import task.Task;
+import taskinfo.TasksStatus;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 public class Main {
     public static void main(String[] args) throws IOException {
         KVServer kvServer = new KVServer();
         kvServer.start();
         HTTPTaskManager taskManager = Managers.getDefault();
-        taskManager.add(new Task(1, "Task 1", "Description Task 1", "NEW", 1440L, LocalDateTime.of(2022, 10, 1, 12, 0)));
-        taskManager.add(new Task(1, "Task 2", "Description Task 2", "NEW", 1440L, LocalDateTime.of(2022, 10, 3, 12, 0)));
-        taskManager.add(new Epic(1, "Epic 1", "Description Epic 1", "NEW", 1440L, LocalDateTime.of(2022, 10, 5, 12, 0)));
-        taskManager.add(new Subtask(1, "Subtask 1 Epic 1", "Description Subtask 1 Epic 1", "NEW",1440L, LocalDateTime.of(2022, 10, 7, 12, 0), 3));
-        taskManager.add(new Subtask(1, "Subtask 2 Epic 1", "Description Subtask 2 Epic 1", "NEW",1440L, LocalDateTime.of(2022, 10, 9, 12, 0), 3));
-        taskManager.add(new Epic(1, "Epic 2", "Description Epic 2", "NEW", 1440L, LocalDateTime.of(2022, 10, 11, 12, 0)));
-        taskManager.add(new Subtask(1, "Subtask 1 Epic 2", "Description Subtask 1 Epic 2", "NEW",1440L, LocalDateTime.of(2022, 10, 13, 12, 0), 6));
+
+        Task firstTask = new Task(1, "T1", "Desc T1", TasksStatus.NEW.toString(), 1440L, Managers.createDate(1, 10));
+        Task secondTask = new Task(1, "T2", "Desc T2", TasksStatus.NEW.toString(), 1440L, Managers.createDate(3, 10));
+        Epic firstEpic = new Epic(1, "E1", "Desc E1", TasksStatus.NEW.toString(), 1440L, Managers.createDate(5, 10));
+        Subtask firstSubtaskFirstEpic = new Subtask(1, "S1 E1", "Desc S1 E1", TasksStatus.NEW.toString(),1440L, Managers.createDate(7, 10), 3);
+        Subtask secondSubtaskFirstEpic = new Subtask(1, "S2 E1", "Desc S2 E1", TasksStatus.NEW.toString(),1440L, Managers.createDate(9, 10), 3);
+        Epic secondEpic = new Epic(1, "E2", "Desc E2", TasksStatus.NEW.toString(), 1440L, Managers.createDate(11, 10));
+        Subtask firstSubtaskSecondEpic = new Subtask(1, "S1 E2", "Desc S1 E2", TasksStatus.NEW.toString(),1440L, Managers.createDate(13, 10), 6);
+
+        taskManager.add(firstTask);
+        taskManager.add(secondTask);
+        taskManager.add(firstEpic);
+        taskManager.add(firstSubtaskFirstEpic);
+        taskManager.add(secondSubtaskFirstEpic);
+        taskManager.add(secondEpic);
+        taskManager.add(firstSubtaskSecondEpic);
+
         System.out.println("All tasks: " + '\n' + taskManager.getAllTasks());
         System.out.println("All epics: " + '\n' + taskManager.getAllEpics());
         System.out.println("All subtasks: " + '\n' + taskManager.getAllSubtasks());
-        taskManager.update(new Task(1, "Task 1", "Changed Description Task 1", "IN_PROGRESS", 1440L, LocalDateTime.of(2022, 10, 1, 12, 0)));
-        taskManager.update(new Subtask(4, "Subtask 1 Epic 1", "Changed Description Subtask 1 Epic 1", "IN_PROGRESS",1440L, LocalDateTime.of(2022, 10, 7, 12, 0), taskManager.getSubtasksMap().get(4).getEpicId()));
-        taskManager.update(new Subtask(7, "Subtask 1 Epic 2", "Changed Description Subtask 1 Epic 2", "DONE", 1440L, LocalDateTime.of(2022, 10, 13, 12, 0), taskManager.getSubtasksMap().get(7).getEpicId()));
+
+        Task updatedFirstTask = new Task(1, "Task 1", "Changed Desc T1", TasksStatus.IN_PROGRESS.toString(), 1440L, Managers.createDate(1, 10));
+        Subtask updatedFirstSubtaskFirstEpic = new Subtask(4, "S1 E1", "Changed Desc S1 E1", TasksStatus.IN_PROGRESS.toString(),1440L, Managers.createDate(7, 10), taskManager.getSubtasksMap().get(4).getEpicId());
+        Subtask updatedFirstSubtaskSecondEpic = new Subtask(7, "S1 E2", "Changed Desc S1 E2", TasksStatus.DONE.toString(), 1440L, Managers.createDate(13, 10), taskManager.getSubtasksMap().get(7).getEpicId());
+
+        taskManager.update(updatedFirstTask);
+        taskManager.update(updatedFirstSubtaskFirstEpic);
+        taskManager.update(updatedFirstSubtaskSecondEpic);
         System.out.println("All tasks: " + '\n' + taskManager.getAllTasks());
         System.out.println("All epics: " + '\n' + taskManager.getAllEpics());
         System.out.println("All subtasks: " + '\n' + taskManager.getAllSubtasks());
         System.out.println(taskManager.getHistory().toString());
+
         taskManager.deleteOneSubTask(4);
         taskManager.deleteOneEpic(3);
         taskManager.deleteOneTask(1);
@@ -40,15 +56,14 @@ public class Main {
         System.out.println("Browsing task 2: " + '\n' + taskManager.getOneTask(2));
         System.out.println(taskManager.getHistory().toString());
         System.out.println("Prior tasks: " + taskManager.getPrioritizedTasks());
-        System.out.println("");
-        System.out.println("");
+
         taskManager.save();
         taskManager.load();
-//        System.out.println("All tasks: " + '\n' + taskManager.getAllTasks());
-//        System.out.println("All epics: " + '\n' + taskManager.getAllEpics());
-//        System.out.println("All subtasks: " + '\n' + taskManager.getAllSubtasks());
+        System.out.println("All tasks: " + '\n' + taskManager.getAllTasks());
+        System.out.println("All epics: " + '\n' + taskManager.getAllEpics());
+        System.out.println("All subtasks: " + '\n' + taskManager.getAllSubtasks());
         System.out.println(taskManager.getHistory().toString());
-        kvServer.stop();
 
+        kvServer.stop();
     }
 }

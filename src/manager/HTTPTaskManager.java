@@ -48,8 +48,8 @@ public class HTTPTaskManager extends FileBackedTaskManager {
     ArrayList<Task> jsonHistoryArray= gson.fromJson(jsonHistory, new TypeToken<ArrayList<Task>>(){}.getType());
 
 
-//        for (Task task : jsonHistoryArray) {
-//            inMemoryHistoryManager.add(task);
-//        }
+        for (Task task : jsonHistoryArray) {
+            inMemoryHistoryManager.add(task);
+        }
     }
 }

@@ -3,6 +3,7 @@ package manager;
 import task.Epic;
 import task.Subtask;
 import task.Task;
+import taskinfo.TasksStatus;
 import taskinfo.TasksType;
 
 import java.io.*;
@@ -22,16 +23,31 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public static void main(String[] args) {
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager("src\\Manager\\TaskManager.csv");
-        fileBackedTaskManager.add(new Task(1, "Task 1", "Description Task 1", "NEW", 1440L, LocalDateTime.of(2022, 10, 1, 12, 0)));
-        fileBackedTaskManager.add(new Task(1, "Task 2", "Description Task 2", "NEW", 1440L, LocalDateTime.of(2022, 10, 3, 12, 0)));
-        fileBackedTaskManager.add(new Epic(1, "Epic 1", "Description Epic 1", "NEW", 1440L, LocalDateTime.of(2022, 10, 5, 12, 0)));
-        fileBackedTaskManager.add(new Epic(1, "Epic 2", "Description Epic 2", "NEW", 1440L, LocalDateTime.of(2022, 10, 7, 12, 0)));
-        fileBackedTaskManager.add(new Subtask(1, "Subtask 1 Epic 1", "Description Subtask 1 Epic 1", "NEW", 1440L, LocalDateTime.of(2022, 10, 9, 12, 0), 3));
-        fileBackedTaskManager.add(new Subtask(1, "Subtask 2 Epic 1", "Description Subtask 2 Epic 1", "NEW", 1440L, LocalDateTime.of(2022, 10, 11, 12, 0), 3));
-        fileBackedTaskManager.add(new Subtask(1, "Subtask 1 Epic 2", "Description Subtask 1 Epic 2", "NEW", 1440L, LocalDateTime.of(2022, 10, 13, 12, 0), 4));
-        fileBackedTaskManager.update(new Task(1, "Task 1", "Changed Description Task 1", "IN_PROGRESS", 1440L, LocalDateTime.of(2022, 10, 1, 12, 0)));
-        fileBackedTaskManager.update(new Subtask(5, "Subtask 1 Epic 1", "Changed Description Subtask 1 Epic 1", "IN_PROGRESS", 1440L, LocalDateTime.of(2022, 10, 9, 12, 0), fileBackedTaskManager.getSubtasksMap().get(5).getEpicId()));
-        fileBackedTaskManager.update(new Subtask(7, "Subtask 1 Epic 2", "Changed Description Subtask 1 Epic 2", "DONE", 1440L, LocalDateTime.of(2022, 10, 13, 12, 0), fileBackedTaskManager.getSubtasksMap().get(7).getEpicId()));
+
+        Task firstTask = new Task(1, "T1", "Desc T1", TasksStatus.NEW.toString(), 1440L, Managers.createDate(1, 10));
+        Task secondTask = new Task(1, "T2", "Desc T2", TasksStatus.NEW.toString(), 1440L, Managers.createDate(3, 10));
+        Epic firstEpic = new Epic(1, "E1", "Desc E1", TasksStatus.NEW.toString(), 1440L, Managers.createDate(5, 10));
+        Epic secondEpic = new Epic(1, "E2", "Desc E2", TasksStatus.NEW.toString(), 1440L, Managers.createDate(11, 10));
+        Subtask firstSubtaskFirstEpic = new Subtask(1, "S1 E1", "Desc S1 E1", TasksStatus.NEW.toString(),1440L, Managers.createDate(7, 10), 3);
+        Subtask secondSubtaskFirstEpic = new Subtask(1, "S2 E1", "Desc S2 E1", TasksStatus.NEW.toString(),1440L, Managers.createDate(9, 10), 3);
+        Subtask firstSubtaskSecondEpic = new Subtask(1, "S1 E2", "Desc S1 E2", TasksStatus.NEW.toString(),1440L, Managers.createDate(13, 10), 4);
+
+        fileBackedTaskManager.add(firstTask);
+        fileBackedTaskManager.add(secondTask);
+        fileBackedTaskManager.add(firstEpic);
+        fileBackedTaskManager.add(secondEpic);
+        fileBackedTaskManager.add(firstSubtaskFirstEpic);
+        fileBackedTaskManager.add(secondSubtaskFirstEpic);
+        fileBackedTaskManager.add(firstSubtaskSecondEpic);
+
+        Task updatedFirstTask = new Task(1, "Task 1", "Changed Desc T1", TasksStatus.IN_PROGRESS.toString(), 1440L, Managers.createDate(1, 10));
+        Subtask updatedFirstSubtaskFirstEpic = new Subtask(5, "S1 E1", "Changed Desc S1 E1", TasksStatus.IN_PROGRESS.toString(),1440L, Managers.createDate(7, 10), fileBackedTaskManager.getSubtasksMap().get(5).getEpicId());
+        Subtask updatedFirstSubtaskSecondEpic = new Subtask(7, "S1 E2", "Changed Desc S1 E2", TasksStatus.DONE.toString(), 1440L, Managers.createDate(13, 10), fileBackedTaskManager.getSubtasksMap().get(7).getEpicId());
+
+        fileBackedTaskManager.update(updatedFirstTask);
+        fileBackedTaskManager.update(updatedFirstSubtaskFirstEpic);
+        fileBackedTaskManager.update(updatedFirstSubtaskSecondEpic);
+
         System.out.println("All tasks: " + '\n' + fileBackedTaskManager.getAllTasks());
         System.out.println("All epics: " + '\n' + fileBackedTaskManager.getAllEpics());
         System.out.println("All subtasks: " + '\n' + fileBackedTaskManager.getAllSubtasks());
@@ -116,11 +132,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         } else {
             return new Task(taskId, taskName, taskDescription, taskStatus, duration, startTime);
         }
-//        return switch (taskType) {
-//            case ("EPIC") -> new Epic(taskId, taskName, taskDescription, taskStatus, duration, startTime);
-//            case ("SUBTASK") -> new Subtask(taskId, taskName, taskDescription, taskStatus, duration, startTime, epicId);
-//            default -> new Task(taskId, taskName, taskDescription, taskStatus, duration, startTime);
-//        };
     }
 
     public static List<Integer> historyFromString(String value) {
