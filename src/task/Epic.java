@@ -3,23 +3,24 @@ package task;
 import taskinfo.TasksType;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Epic extends Task {
     protected ArrayList<Integer> subtasksIds;
-    protected Instant endTime = startTime.plusSeconds((duration * SECONDS_IN_MINUTES));
+    protected LocalDateTime endTime = startTime.plusSeconds((duration * SECONDS_IN_MINUTES));
 
-    public Epic(int taskId, String name, String description, String status, long duration, Instant startTime) {
+    public Epic(int taskId, String name, String description, String status, long duration, LocalDateTime startTime) {
         super(taskId, name, description, status, duration, startTime);
         subtasksIds = new ArrayList<>();
     }
 
     @Override
-    public Instant getEndTime() {
+    public LocalDateTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Instant endTime) {
+    public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
 

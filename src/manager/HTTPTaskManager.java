@@ -14,25 +14,25 @@ import java.util.List;
 
 public class HTTPTaskManager extends FileBackedTaskManager {
     protected KVTaskClient kvTaskClient = new KVTaskClient();
-    protected Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    protected Gson gson = new GsonBuilder().create();
 
     public HTTPTaskManager() {
         super("src\\Manager\\TaskManager.csv");
     }
 
-
+    @Override
     public void save() {
-        String jsonTask = gson.toJson(tasks);
-        kvTaskClient.put("tasks", jsonTask);
+        String jsonTasks = gson.toJson(tasks);
+        kvTaskClient.put("tasks", jsonTasks);
 
-        String jsonEpic = gson.toJson(epics);
-        kvTaskClient.put("epics", jsonEpic);
+        String jsonEpics = gson.toJson(epics);
+        kvTaskClient.put("epics", jsonEpics);
 
-        String jsonSubTask = gson.toJson(subtasks);
-        kvTaskClient.put("subtasks", jsonSubTask);
+        String jsonSubTasks = gson.toJson(subtasks);
+        kvTaskClient.put("subtasks", jsonSubTasks);
 
-        List<Task> history = getHistory().getLastViewTask();
-        String jsonHistory = gson.toJson((history));
+        List<Task> history = inMemoryHistoryManager.getLastViewTask();
+        String jsonHistory = gson.toJson(history);
         kvTaskClient.put("history", jsonHistory);
     }
 
@@ -48,14 +48,8 @@ public class HTTPTaskManager extends FileBackedTaskManager {
     ArrayList<Task> jsonHistoryArray= gson.fromJson(jsonHistory, new TypeToken<ArrayList<Task>>(){}.getType());
 
 
-        for (Task task : jsonHistoryArray) {
-            if (tasks.containsKey(task.getTaskId())) {
-                inMemoryHistoryManager.add(task);
-            } else if (subtasks.containsKey(task.getTaskId())) {
-                inMemoryHistoryManager.add(subtasks.get(task));
-            } else {
-                inMemoryHistoryManager.add(epics.get(task));
-            }
-        }
+//        for (Task task : jsonHistoryArray) {
+//            inMemoryHistoryManager.add(task);
+//        }
     }
 }

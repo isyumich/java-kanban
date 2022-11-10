@@ -4,17 +4,19 @@ import taskinfo.TasksStatus;
 import taskinfo.TasksType;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Task {
-    protected final int SECONDS_IN_MINUTES = 60;
+    int SECONDS_IN_MINUTES = 60;
     protected int taskId;
     protected String name;
     protected String description;
     protected String status;
     protected long duration;
-    protected Instant startTime;
+    protected LocalDateTime startTime;
 
-    public Task(int taskId, String name, String Description, String Status, long duration, Instant startTime) {
+    public Task(int taskId, String name, String Description, String Status, long duration, LocalDateTime startTime) {
         this.taskId = taskId;
         this.name = name;
         this.description = Description;
@@ -58,14 +60,14 @@ public class Task {
         this.duration = duration;
     }
 
-    public Instant getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
-    public void setStartTime(Instant startTime) {
+    public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
 
-    public Instant getEndTime() {
+    public LocalDateTime getEndTime() {
         return startTime.plusSeconds(SECONDS_IN_MINUTES * duration);
     }
 

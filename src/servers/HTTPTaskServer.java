@@ -1,35 +1,39 @@
 package servers;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import manager.Managers;
 import manager.TaskManager;
 import task.Epic;
 import task.Subtask;
 import task.Task;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Objects;
 
-public class HttpTaskServer {
+public class HTTPTaskServer {
     private static final int PORT = 8080;
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private static final TaskManager taskManager = Managers.getDefault();
+    private final TaskManager taskManager;// = new FileBackedTaskManager("src\\Manager\\TaskManager.csv");;
     private final HttpServer httpServer;
 
-    public HttpTaskServer() throws IOException {
+    public HTTPTaskServer(TaskManager taskManager) throws IOException {
         this.httpServer = HttpServer.create();
+        this.taskManager = taskManager;
     }
 
     public void startServer() throws IOException {
-        httpServer.bind(new InetSocketAddress(PORT), 0);
+        httpServer.bind(new InetSocketAddress("localhost", PORT), 0);
         httpServer.createContext("/tasks", new TasksHandler());
         httpServer.start();
     }
@@ -38,12 +42,13 @@ public class HttpTaskServer {
         httpServer.stop(1);
     }
 
-    static class TasksHandler implements HttpHandler {
+    class TasksHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange httpExchange) {
             try {
                 URI requestURI = httpExchange.getRequestURI();
                 String path = requestURI.getPath();
+                String query = requestURI.getRawQuery();
                 String method = httpExchange.getRequestMethod();
                 switch (method) {
                     case "POST":
@@ -69,68 +74,78 @@ public class HttpTaskServer {
                         } else if (path.endsWith("/epic/")) {
                             Epic epic = gson.fromJson(taskBody, Epic.class);
                             int epicId = epic.getTaskId();
-                            if (!taskManager.getSubtasksMap().containsKey(epicId)) {
+                            if (!taskManager.getEpicsMap().containsKey(epicId)) {
                                 taskManager.add(epic);
                             } else {
                                 taskManager.update(epic);
                             }
                         }
                         httpExchange.sendResponseHeaders(201, 0);
-                        try (OutputStream os = httpExchange.getResponseBody()) {
-                            os.write("".getBytes());
-                        }
                         httpExchange.close();
                         break;
                     case "GET":
                         httpExchange.sendResponseHeaders(200, 0);
-                        if (path.contains("?")) {
-                            int id = Integer.parseInt(path.split("\\?")[1].split("=")[1]);
-                            if (path.contains("/subtask/epic?id=")) {
-                                try (OutputStream os = httpExchange.getResponseBody()) {
-                                    os.write(gson.toJson(taskManager.getSubtasksOneEpic(id)).getBytes());
+                        if (query != null) {
+                            int id = Integer.parseInt(query.split("=")[1]);
+                            if (path.endsWith("/subtask/epic/")) {
+                                ArrayList<Integer> allSubtasksIds = taskManager.getEpicsMap().get(id).getSubtasksIds();
+                                ArrayList<Subtask> allSubtasksList = new ArrayList<>();
+                                for (int number : allSubtasksIds) {
+                                    for (int subtaskValue : taskManager.getSubtasksMap().keySet()) {
+                                        if (number == subtaskValue) {
+                                            allSubtasksList.add(taskManager.getSubtasksMap().get(subtaskValue));
+                                        }
+                                    }
                                 }
-                            } else if (path.contains("/subtask/?id=")) {
                                 try (OutputStream os = httpExchange.getResponseBody()) {
-                                    os.write(gson.toJson(taskManager.getOneSubTask(id)).getBytes());
+                                    os.write(gson.toJson(allSubtasksList).getBytes());
                                 }
-                            } else if (path.contains("/epic/?id=")) {
+                            } else if (path.endsWith("/subtask/")) {
                                 try (OutputStream os = httpExchange.getResponseBody()) {
-                                    os.write(gson.toJson(taskManager.getOneEpic(id)).getBytes());
+                                    os.write(gson.toJson(taskManager.getSubtasksMap().get(id)).getBytes());
                                 }
-                            } else if (path.contains("/task/?id=")) {
+                            } else if (path.endsWith("/epic/")) {
                                 try (OutputStream os = httpExchange.getResponseBody()) {
-                                    os.write(gson.toJson(taskManager.getOneTask(id)).getBytes());
+                                    os.write(gson.toJson(taskManager.getEpicsMap().get(id)).getBytes());
+                                }
+                            } else if (path.endsWith("/task/")) {
+                                try (OutputStream os = httpExchange.getResponseBody()) {
+                                    os.write(gson.toJson(taskManager.getTasksMap().get(id)).getBytes());
                                 }
                             }
                         } else {
                             if (path.endsWith("/task/")) {
                                 try (OutputStream os = httpExchange.getResponseBody()) {
-                                    os.write(gson.toJson(taskManager.getAllTasks()).getBytes());
+                                    os.write(gson.toJson(taskManager.getTasksMap()).getBytes());
                                 }
                             } else if (path.endsWith("/subtask/")) {
                                 try (OutputStream os = httpExchange.getResponseBody()) {
-                                    os.write(gson.toJson(taskManager.getAllSubtasks()).getBytes());
+                                    os.write(gson.toJson(taskManager.getSubtasksMap()).getBytes());
                                 }
                             } else if (path.endsWith("/epic/")) {
                                 try (OutputStream os = httpExchange.getResponseBody()) {
-                                    os.write(gson.toJson(taskManager.getAllEpics()).getBytes());
+                                    os.write(gson.toJson(taskManager.getEpicsMap()).getBytes());
                                 }
-                            } else if (path.endsWith("/history")) {
+                            } else if (path.endsWith("/history/")) {
                                 try (OutputStream os = httpExchange.getResponseBody()) {
                                     os.write(gson.toJson(taskManager.getHistory()).getBytes());
+                                }
+                            } else if (path.endsWith("/tasks/")) {
+                                try (OutputStream os = httpExchange.getResponseBody()) {
+                                    os.write(gson.toJson(taskManager.getPrioritizedTasks()).getBytes());
                                 }
                             }
                         }
                         httpExchange.close();
                         break;
                     case "DELETE":
-                        if (path.contains("?")) {
-                            int id = Integer.parseInt(path.split("\\?")[1].split("=")[1]);
-                            if (path.contains("/subtask/?id=")) {
+                        if (query != null) {
+                            int id = Integer.parseInt(query.split("=")[1]);
+                            if (path.endsWith("/task/")) {
                                 taskManager.deleteOneTask(id);
-                            } else if (path.contains("/epic/?id=")) {
+                            } else if (path.endsWith("/epic/")) {
                                 taskManager.deleteOneEpic(id);
-                            } else if (path.contains("/task/?id=")) {
+                            } else if (path.endsWith("/subtask/")) {
                                 taskManager.deleteOneSubTask(id);
                             }
                         } else {

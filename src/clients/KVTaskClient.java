@@ -7,7 +7,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class KVTaskClient {
-    private final String url = "http://localhost:8080";
+    private final String url = "http://localhost:8080/";
     protected String apiToken;
 
     public KVTaskClient() {
@@ -16,7 +16,7 @@ public class KVTaskClient {
 
     private void register() {
         HttpClient httpClient = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).header("Accept", "application/json").GET().build();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url + "register/")).header("Accept", "application/json").GET().build();
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
@@ -34,8 +34,8 @@ public class KVTaskClient {
         try {
             HttpClient httpClient = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(url + "save/" + key + "?API_TOKEN" + json))
-                    .header("Accept", "application/json")
+                    .uri(URI.create(url + "save/" + key + "?API_TOKEN=" + apiToken))
+                    .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(json))
                     .build();
             httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -49,7 +49,7 @@ public class KVTaskClient {
         try {
             HttpClient httpClient = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(url + "load/" + key + "?API_TOKEN" + apiToken))
+                    .uri(URI.create(url + "load/" + key + "?API_TOKEN=" + apiToken))
                     .header("Accept", "application/json")
                     .GET()
                     .build();

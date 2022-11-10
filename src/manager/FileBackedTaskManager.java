@@ -3,10 +3,11 @@ package manager;
 import task.Epic;
 import task.Subtask;
 import task.Task;
+import taskinfo.TasksType;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,16 +22,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public static void main(String[] args) {
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager("src\\Manager\\TaskManager.csv");
-        fileBackedTaskManager.add(new Task(1, "Task 1", "Description Task 1", "NEW", 1440L, Instant.ofEpochSecond(1664640000)));
-        fileBackedTaskManager.add(new Task(1, "Task 2", "Description Task 2", "NEW", 1440L, Instant.ofEpochSecond(1664812800)));
-        fileBackedTaskManager.add(new Epic(1, "Epic 1", "Description Epic 1", "NEW", 1440L, Instant.ofEpochSecond(1664985600)));
-        fileBackedTaskManager.add(new Epic(1, "Epic 2", "Description Epic 2", "NEW", 1440L, Instant.ofEpochSecond(1665504000)));
-        fileBackedTaskManager.add(new Subtask(1, "Subtask 1 Epic 1", "Description Subtask 1 Epic 1", "NEW", 1440L, Instant.ofEpochSecond(1665158400), 3));
-        fileBackedTaskManager.add(new Subtask(1, "Subtask 2 Epic 1", "Description Subtask 2 Epic 1", "NEW", 1440L, Instant.ofEpochSecond(1665331200), 3));
-        fileBackedTaskManager.add(new Subtask(1, "Subtask 1 Epic 2", "Description Subtask 1 Epic 2", "NEW", 1440L, Instant.ofEpochSecond(1665676800), 4));
-        fileBackedTaskManager.update(new Task(1, "Task 1", "Changed Description Task 1", "IN_PROGRESS", 1440L, Instant.ofEpochSecond(1664640000)));
-        fileBackedTaskManager.update(new Subtask(5, "Subtask 1 Epic 1", "Changed Description Subtask 1 Epic 1", "IN_PROGRESS", 1440L, Instant.ofEpochSecond(1665158400), fileBackedTaskManager.getSubtasksMap().get(5).getEpicId()));
-        fileBackedTaskManager.update(new Subtask(7, "Subtask 1 Epic 2", "Changed Description Subtask 1 Epic 2", "DONE", 1440L, Instant.ofEpochSecond(1665676800), fileBackedTaskManager.getSubtasksMap().get(7).getEpicId()));
+        fileBackedTaskManager.add(new Task(1, "Task 1", "Description Task 1", "NEW", 1440L, LocalDateTime.of(2022, 10, 1, 12, 0)));
+        fileBackedTaskManager.add(new Task(1, "Task 2", "Description Task 2", "NEW", 1440L, LocalDateTime.of(2022, 10, 3, 12, 0)));
+        fileBackedTaskManager.add(new Epic(1, "Epic 1", "Description Epic 1", "NEW", 1440L, LocalDateTime.of(2022, 10, 5, 12, 0)));
+        fileBackedTaskManager.add(new Epic(1, "Epic 2", "Description Epic 2", "NEW", 1440L, LocalDateTime.of(2022, 10, 7, 12, 0)));
+        fileBackedTaskManager.add(new Subtask(1, "Subtask 1 Epic 1", "Description Subtask 1 Epic 1", "NEW", 1440L, LocalDateTime.of(2022, 10, 9, 12, 0), 3));
+        fileBackedTaskManager.add(new Subtask(1, "Subtask 2 Epic 1", "Description Subtask 2 Epic 1", "NEW", 1440L, LocalDateTime.of(2022, 10, 11, 12, 0), 3));
+        fileBackedTaskManager.add(new Subtask(1, "Subtask 1 Epic 2", "Description Subtask 1 Epic 2", "NEW", 1440L, LocalDateTime.of(2022, 10, 13, 12, 0), 4));
+        fileBackedTaskManager.update(new Task(1, "Task 1", "Changed Description Task 1", "IN_PROGRESS", 1440L, LocalDateTime.of(2022, 10, 1, 12, 0)));
+        fileBackedTaskManager.update(new Subtask(5, "Subtask 1 Epic 1", "Changed Description Subtask 1 Epic 1", "IN_PROGRESS", 1440L, LocalDateTime.of(2022, 10, 9, 12, 0), fileBackedTaskManager.getSubtasksMap().get(5).getEpicId()));
+        fileBackedTaskManager.update(new Subtask(7, "Subtask 1 Epic 2", "Changed Description Subtask 1 Epic 2", "DONE", 1440L, LocalDateTime.of(2022, 10, 13, 12, 0), fileBackedTaskManager.getSubtasksMap().get(7).getEpicId()));
         System.out.println("All tasks: " + '\n' + fileBackedTaskManager.getAllTasks());
         System.out.println("All epics: " + '\n' + fileBackedTaskManager.getAllEpics());
         System.out.println("All subtasks: " + '\n' + fileBackedTaskManager.getAllSubtasks());
@@ -106,13 +107,20 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String taskDescription = values[4];
         String taskStatus = values[3];
         long duration = Long.parseLong(values[5]);
-        Instant startTime = Instant.parse(values[6]);
-        int epicId = taskType.equals("SUBTASK") ? Integer.parseInt(values[7]) : 0;
-        return switch (taskType) {
-            case ("EPIC") -> new Epic(taskId, taskName, taskDescription, taskStatus, duration, startTime);
-            case ("SUBTASK") -> new Subtask(taskId, taskName, taskDescription, taskStatus, duration, startTime, epicId);
-            default -> new Task(taskId, taskName, taskDescription, taskStatus, duration, startTime);
-        };
+        LocalDateTime startTime = LocalDateTime.parse(values[6]);
+        int epicId = taskType.equals(TasksType.SUBTASK.toString()) ? Integer.parseInt(values[7]) : 0;
+        if (taskType.equals(TasksType.EPIC.toString())) {
+            return new Epic(taskId, taskName, taskDescription, taskStatus, duration, startTime);
+        } else if (taskType.equals(TasksType.SUBTASK.toString())) {
+            return new Subtask(taskId, taskName, taskDescription, taskStatus, duration, startTime, epicId);
+        } else {
+            return new Task(taskId, taskName, taskDescription, taskStatus, duration, startTime);
+        }
+//        return switch (taskType) {
+//            case ("EPIC") -> new Epic(taskId, taskName, taskDescription, taskStatus, duration, startTime);
+//            case ("SUBTASK") -> new Subtask(taskId, taskName, taskDescription, taskStatus, duration, startTime, epicId);
+//            default -> new Task(taskId, taskName, taskDescription, taskStatus, duration, startTime);
+//        };
     }
 
     public static List<Integer> historyFromString(String value) {

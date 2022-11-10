@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
 
@@ -38,15 +39,15 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     @Test
     public void shouldSaveAndLoadStandard() {
         HashMap<Integer, Task> tasksForTest = new HashMap<>();
-        Task task = new Task(1, "Task 1", "Description Task 1", "NEW", 1440L, Instant.ofEpochSecond(1664640000));
+        Task task = new Task(1, "Task 1", "Description Task 1", "NEW", 1440L, LocalDateTime.of(2022, 10, 1, 12, 0));
         taskManager.add(task);
         tasksForTest.put(1, task);
         HashMap<Integer, Epic> epicsForTest = new HashMap<>();
-        Epic epic = new Epic(1, "Epic 1", "Description Epic 1", "NEW", 1440L, Instant.ofEpochSecond(1664985600));
+        Epic epic = new Epic(1, "Epic 1", "Description Epic 1", "NEW", 1440L, LocalDateTime.of(2022, 10, 3, 12, 0));
         taskManager.add(epic);
         epicsForTest.put(2, epic);
         HashMap<Integer, Subtask> subtasksForTest = new HashMap<>();
-        Subtask subtask = new Subtask(1, "Epic 1", "Description Epic 1", "NEW", 1440L, Instant.ofEpochSecond(1664985600), 2);
+        Subtask subtask = new Subtask(1, "Epic 1", "Description Epic 1", "NEW", 1440L, LocalDateTime.of(2022, 10, 5, 12, 0), 2);
         taskManager.add(subtask);
         subtasksForTest.put(3, subtask);
         FileBackedTaskManager fileManager = new FileBackedTaskManager(String.valueOf(path));

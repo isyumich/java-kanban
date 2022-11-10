@@ -1,11 +1,13 @@
 package manager;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import task.Epic;
 import task.Subtask;
 import task.Task;
 import taskinfo.TasksStatus;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -14,6 +16,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected HashMap<Integer, Task> tasks = new HashMap<>();
     protected HashMap<Integer, Epic> epics = new HashMap<>();
     protected HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    protected Gson gson = new GsonBuilder().create();
 
     protected final Comparator<Task> taskStartTimeComparator = Comparator.comparing(Task::getStartTime);
     protected Set<Task> prioritizedTasks = new TreeSet<>(taskStartTimeComparator);
@@ -147,7 +150,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
     @Override
     public List<Task> getPrioritizedTasks() {
-        return prioritizedTasks.stream().toList();
+        return new ArrayList<>(prioritizedTasks);
     }
 
     /*Методы удаления задач*/
@@ -275,8 +278,8 @@ public class InMemoryTaskManager implements TaskManager {
         if (!subtasks.isEmpty()) {
             List<Integer> subtasksIds = epic.getSubtasksIds();
             long duration = 0;
-            Instant startTime = Instant.ofEpochSecond(0);
-            Instant endTime = Instant.ofEpochSecond(0);
+            LocalDateTime startTime = LocalDateTime.of(1970, 1, 1, 12,0);
+            LocalDateTime endTime = LocalDateTime.of(1970, 1, 1, 12,0);
             for (int i = 0; i < subtasksIds.size(); i++) {
                 Subtask subtask = subtasks.get(subtasksIds.get(i));
                 duration += subtask.getDuration();

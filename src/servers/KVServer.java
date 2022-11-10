@@ -14,7 +14,7 @@ public class KVServer {
     public static final int PORT = 8080;
     private final String apiToken;
     private final HttpServer server;
-    private final Map<String, String> data = new HashMap<>();
+    public final Map<String, String> data = new HashMap<>();
 
     public KVServer() throws IOException {
         apiToken = generateApiToken();
@@ -24,41 +24,44 @@ public class KVServer {
         server.createContext("/load", this::load);
     }
 
-    private void load(HttpExchange h) throws IOException {
+    private void load(HttpExchange httpExchange) throws IOException {
         try {
-            System.out.println("\n/load");
-            if (!hasAuth(h)) {
+//            System.out.println("\n/load");
+            if (!hasAuth(httpExchange)) {
                 System.out.println("Запрос неавторизован, нужен параметр в query API_TOKEN со значением апи-ключа");
-                h.sendResponseHeaders(403, 0);
+                httpExchange.sendResponseHeaders(403, 0);
                 return;
             }
-            if ("GET".equals(h.getRequestMethod())) {
-                String key = h.getRequestURI().getPath().substring("/load/".length());
+            if ("GET".equals(httpExchange.getRequestMethod())) {
+                String key = httpExchange.getRequestURI().getPath().substring("/load/".length());
                 if (key.isEmpty()) {
                     System.out.println("Key для получения данных пустой. key указывается в пути: /load/{key}");
-                    h.sendResponseHeaders(400, 0);
+                    httpExchange.sendResponseHeaders(400, 0);
                     return;
                 }
                 if (data.containsKey(key)) {
-                    h.sendResponseHeaders(200, 0);
-                    sendText(h, data.get(key));
+                    System.out.println("Шаг 1");
+                    //httpExchange.sendResponseHeaders(200, 0);
+                    System.out.println("Шаг 2");
+                    sendText(httpExchange, data.get(key));
+                    System.out.println("Шаг 3");
                 } else {
                     System.out.println("Такого значения не существует");
-                    h.sendResponseHeaders(400, 0);
+                    httpExchange.sendResponseHeaders(400, 0);
                 }
 
             } else {
-                System.out.println("/load ждёт GET-запрос, а получил: " + h.getRequestMethod());
-                h.sendResponseHeaders(405, 0);
+                System.out.println("/load ждёт GET-запрос, а получил: " + httpExchange.getRequestMethod());
+                httpExchange.sendResponseHeaders(405, 0);
             }
         } finally {
-            h.close();
+            httpExchange.close();
         }
     }
 
     private void save(HttpExchange h) throws IOException {
         try {
-            System.out.println("\n/save");
+//            System.out.println("/save");
             if (!hasAuth(h)) {
                 System.out.println("Запрос неавторизован, нужен параметр в query API_TOKEN со значением апи-ключа");
                 h.sendResponseHeaders(403, 0);
